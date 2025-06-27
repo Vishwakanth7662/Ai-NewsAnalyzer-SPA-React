@@ -19,6 +19,7 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { CircleCheckBig } from "lucide-react"
 import React from "react"
 import { Alert, AlertTitle } from "@/components/ui/alert"
+import SubDataTable from "./sub-data-table"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -56,14 +57,27 @@ export function DataTable<TData, TValue>({
 
   return (
   <>
-    <div className="mb-4">
-      <Alert variant="default">
+    <div className="mb-4 flex items-center gap-4">
+      <Alert variant="default" className="print-hidden">
         <CircleCheckBig />
         <AlertTitle> {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.</AlertTitle>
-        
       </Alert>
-
+      <button
+        className="print-hidden px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        onClick={() => {
+          // Hide all except selected rows for printing
+          window.requestAnimationFrame(() => {
+            document.body.classList.add('printing-selected');
+            window.print();
+            setTimeout(() => {
+              document.body.classList.remove('printing-selected');
+            }, 1000);
+          });
+        }}
+      >
+        Print
+      </button>
     </div>
     <div className="rounded-md border w-full max-w-screen overflow-x-auto">
       <Table className="min-w-full table-auto whitespace-normal">
@@ -88,12 +102,16 @@ export function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
-              // const isOpen = openRow === row.id
+              const isSelected = row.getIsSelected();
               return (
                 <Collapsible key={row.id} asChild>
                   <>
                     <TableRow
-                      data-state={row.getIsSelected() && "selected"}
+                      data-state={isSelected && "selected"}
+                      className={
+                        typeof window !== 'undefined' ?
+                          (isSelected ? 'print:block' : 'print:hidden') : ''
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="break-words max-w-xs">
@@ -101,16 +119,18 @@ export function DataTable<TData, TValue>({
                         </TableCell>
                       ))}
                     </TableRow>
-                    <CollapsibleContent asChild className="p-0 bg-sidebar-accent text-sidebar-primary-foreground">
+                    <CollapsibleContent asChild className={
+                      'p-0 bg-sidebar-accent text-sidebar-primary-foreground ' +
+                      (typeof window !== 'undefined' ? (isSelected ? 'print:block' : 'print:hidden') : '')
+                    }>
                       <tr className="p-0 border-b">
                         <td colSpan={columns.length + 1} className="p-0 border-t-0">
-                          <div className="p-4">{row.getValue("description") ?? 'No Content available'}</div>
+                          <SubDataTable row={row} />
                         </td>
                       </tr>
                     </CollapsibleContent>
                   </>
                 </Collapsible>
-
               )
             })
           ) : (
