@@ -23,18 +23,32 @@ import { Alert, AlertTitle } from "@/components/ui/alert"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  onRowSelectionChange?: (rowSelection: Record<string, unknown>) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
+
+  // Wrap setRowSelection to notify parent
+  const handleRowSelectionChange = React.useCallback((updater: any) => {
+    setRowSelection((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      if (onRowSelectionChange) {
+        onRowSelectionChange(next)
+      }
+      return next
+    })
+  }, [onRowSelectionChange])
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: handleRowSelectionChange,
     state: {
       rowSelection,
     },
@@ -44,17 +58,10 @@ export function DataTable<TData, TValue>({
   <>
     <div className="mb-4">
       <Alert variant="default">
-        {/* <Terminal /> */}
         <CircleCheckBig />
         <AlertTitle> {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.</AlertTitle>
-        {/* <AlertDescription>
-          You can add components and dependencies to your app using the cli.
-          <div className="text-muted-foreground flex-1 text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-        </AlertDescription> */}
+        
       </Alert>
 
     </div>
@@ -88,13 +95,6 @@ export function DataTable<TData, TValue>({
                     <TableRow
                       data-state={row.getIsSelected() && "selected"}
                     >
-                      {/* <TableCell className="w-8">
-                        <CollapsibleTrigger asChild>
-                          <button type="button">
-                            <ChevronDownIcon className={`transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} />
-                          </button>
-                        </CollapsibleTrigger>
-                      </TableCell> */}
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="break-words max-w-xs">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
