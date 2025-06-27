@@ -2,8 +2,11 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CollapsibleTrigger } from "@/components/ui/collapsible"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { type ColumnDef } from "@tanstack/react-table"
+import { ChevronDownIcon } from "lucide-react"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -20,6 +23,37 @@ export type Article = {
 }
 
 export const columns: ColumnDef<Article>[] = [
+  {
+    accessorKey: "Details",
+    header: "",
+    cell: ({ row }) => (
+      <CollapsibleTrigger asChild>
+        <button type="button" aria-label="Expand row">
+          <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
+        </button>
+      </CollapsibleTrigger>
+    ),
+  },
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+  },
   {
     accessorKey: "image_url",
     header: "Image",
@@ -46,29 +80,29 @@ export const columns: ColumnDef<Article>[] = [
     accessorKey: "description",
     header: "Description",
     // cell: ({ getValue }) => <span className="whitespace-pre-line break-words max-w-md inline-block">{getValue() as string}</span>,
-    cell: ({row, getValue }) => <span className="whitespace-pre-line break-words max-w-xs inline-block">
+    cell: ({ row, getValue }) => <span className="whitespace-pre-line break-words max-w-xs inline-block">
       <HoverCard>
-      <HoverCardTrigger asChild>
-        <Button variant="link">@nextjs</Button>
-      </HoverCardTrigger>
-      <HoverCardContent className="w-80">
-        <div className="flex justify-between gap-4">
-          <Avatar>
-            <AvatarImage src="https://github.com/vercel.png" />
-            <AvatarFallback>VC</AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <h4 className="text-sm font-semibold">@nextjs</h4>
-            <p className="text-sm">
-              {getValue() as string}
-            </p>
-            <div className="text-muted-foreground text-xs">
-              {row.getValue('pubDate')}
+        <HoverCardTrigger asChild>
+          <Button variant="link">@nextjs</Button>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80">
+          <div className="flex justify-between gap-4">
+            <Avatar>
+              <AvatarImage src="https://github.com/vercel.png" />
+              <AvatarFallback>VC</AvatarFallback>
+            </Avatar>
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold">@nextjs</h4>
+              <p className="text-sm">
+                {getValue() as string}
+              </p>
+              <div className="text-muted-foreground text-xs">
+                {row.getValue('pubDate')}
+              </div>
             </div>
           </div>
-        </div>
-      </HoverCardContent>
-    </HoverCard>
+        </HoverCardContent>
+      </HoverCard>
     </span>,
   },
   {

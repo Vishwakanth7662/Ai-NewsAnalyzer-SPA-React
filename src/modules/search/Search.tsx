@@ -63,7 +63,7 @@ export default function Search() {
 
     return (
         <div className="grid grid-flow-row p-8 max-w-full overflow-x-auto gap-8">
-            <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-4">
                 <Textarea className="flex-[2] min-h-[56px]" />
                 <div className="flex-1 flex justify-center">
                   <Button onClick={() => fetchData(page, pageSize)} className="w-auto px-8">Submit</Button>

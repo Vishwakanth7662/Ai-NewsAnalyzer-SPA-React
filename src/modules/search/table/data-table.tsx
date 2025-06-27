@@ -15,6 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ChevronDownIcon, CircleCheckBig, Terminal } from "lucide-react"
+import React, { useState } from "react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -25,13 +29,36 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [openRow, setOpenRow] = useState<string | null>(null)
+  const [rowSelection, setRowSelection] = React.useState({})
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
   })
 
   return (
+  <>
+    <div className="mb-4">
+      <Alert variant="default">
+        {/* <Terminal /> */}
+        <CircleCheckBig />
+        <AlertTitle> {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.</AlertTitle>
+        {/* <AlertDescription>
+          You can add components and dependencies to your app using the cli.
+          <div className="text-muted-foreground flex-1 text-sm">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        </AlertDescription> */}
+      </Alert>
+
+    </div>
     <div className="rounded-md border w-full max-w-screen overflow-x-auto">
       <Table className="min-w-full table-auto whitespace-normal">
         <TableHeader>
@@ -43,9 +70,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 )
               })}
@@ -54,18 +81,39 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="break-words max-w-xs">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              // const isOpen = openRow === row.id
+              return (
+                <Collapsible key={row.id} asChild>
+                  <>
+                    <TableRow
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {/* <TableCell className="w-8">
+                        <CollapsibleTrigger asChild>
+                          <button type="button">
+                            <ChevronDownIcon className={`transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} />
+                          </button>
+                        </CollapsibleTrigger>
+                      </TableCell> */}
+                      {row.getVisibleCells().map((cell, idx) => (
+                        <TableCell key={cell.id} className="break-words max-w-xs">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    <CollapsibleContent asChild className="p-0 bg-sidebar-accent text-sidebar-primary-foreground">
+                      <tr className="p-0 border-b">
+                        <td colSpan={columns.length + 1} className="p-0 border-t-0">
+                          <div className="p-4">{row.getValue("description") ?? 'No Content available'}</div>
+                        </td>
+                      </tr>
+                    </CollapsibleContent>
+                  </>
+                </Collapsible>
+
+              )
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
@@ -76,5 +124,6 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
+  </>
   )
 }
