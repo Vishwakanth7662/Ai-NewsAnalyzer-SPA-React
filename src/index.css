@@ -233,3 +233,71 @@ body {
     @apply bg-sidebar-accent font-bold;
   }
 } */
+
+
+
+@media print {
+  body, html {
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .print-hidden {
+    display: none !important;
+  }
+  .print-visible {
+    display: block !important;
+  }
+  .text-print {
+    font-size: 12pt;
+    color: black;
+  }
+  /* Remove box shadows, borders, and dark backgrounds from cards and containers */
+  .card, .bg-background, .bg-sidebar, .bg-primary, .bg-secondary {
+    background: #fff !important;
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
+    color: #000 !important;
+  }
+  /* Remove dark backgrounds from table rows and cells */
+  tr, td, th {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #ccc !important;
+  }
+  /* Remove dark backgrounds from buttons */
+  button, .bg-cyan-500, .bg-primary {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+  }
+  /* Hide UI elements that are not needed in print */
+  nav, .sidebar, .print-hidden, .no-print {
+    display: none !important;
+  }
+
+  /* Table styles for print mode */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+  th {
+    background: #222 !important;
+    color: #fff !important;
+    font-weight: bold !important;
+    border: 1px solid #ccc !important;
+    padding: 8px !important;
+  }
+  tr:nth-child(odd) td {
+    background: #f3f3f3 !important;
+  }
+  tr:nth-child(even) td {
+    background: #fff !important;
+  }
+  td {
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+    padding: 8px !important;
+  }
+}

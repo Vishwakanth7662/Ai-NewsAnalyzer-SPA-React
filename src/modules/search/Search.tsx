@@ -4,11 +4,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { DataTable } from "./table/data-table";
 import { columns, type Article } from "./table/columns";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GetArticles } from "./GetArticles";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useReactToPrint } from "react-to-print";
 
 function renderSkeletonTable() {
     return (
@@ -45,6 +46,14 @@ export default function Search() {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
+    
+    let componentRef = useRef(null);
+   
+     const handlePrint = useReactToPrint({
+       contentRef: componentRef,
+       documentTitle: `${'test'}-Print`,
+       onPrintError: () => alert("there is an error when printing"),
+     });
 
     const fetchData = async (pageNum = page, size = pageSize) => {
         setLoading(true);
@@ -62,11 +71,17 @@ export default function Search() {
     const totalPages = Math.ceil(total / pageSize);
 
     return (
-        <div className="grid grid-flow-row p-8 max-w-full overflow-x-auto gap-8">
+        <div className="grid grid-flow-row p-8 max-w-full overflow-x-auto gap-8" ref={componentRef}>
             <div className="flex flex-col md:flex-row items-center gap-4">
                 <Textarea className="flex-[2] min-h-[56px]" />
                 <div className="flex-1 flex justify-center">
                   <Button onClick={() => fetchData(page, pageSize)} className="w-auto px-8">Submit</Button>
+                  <button
+            onClick={handlePrint}
+            className="bg-cyan-500 px-6 py-2 text-white border border-cyan-500 font-bold rounded-md mb-3 w-full lg:w-fit my-6 max-w-sm"
+          >
+            Print Payslip
+          </button>
                 </div>
             </div>
             <div className="">

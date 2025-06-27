@@ -1,16 +1,17 @@
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 // import { useReactToPrint } from 'react-to-print';
  
 function About() {
  let componentRef = useRef(null);
 
-  // const handlePrint = useReactToPrint({
-  //   contentRef: () => componentRef.current,
-  //   documentTitle: `${'test'}-Print`,
-  //   onPrintError: () => alert("there is an error when printing"),
-  // });
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `${'test'}-Print`,
+    onPrintError: () => alert("there is an error when printing"),
+  });
   return (
     <div className="grid p-8" ref={componentRef}>
       <h2 className="text-2xl font-bold mb-4">About</h2>
@@ -35,14 +36,14 @@ function About() {
           </div>
         </Card>
       </div>
-      {/* <div className="print:hidden">
+      <div className="print:hidden">
           <button
             onClick={handlePrint}
             className="bg-cyan-500 px-6 py-2 text-white border border-cyan-500 font-bold rounded-md mb-3 w-full lg:w-fit my-6 max-w-sm"
           >
             Print Payslip
           </button>
-        </div> */}
+        </div>
     </div>
   );
 }

@@ -15,10 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { ChevronDownIcon, CircleCheckBig, Terminal } from "lucide-react"
-import React, { useState } from "react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
+import { CircleCheckBig } from "lucide-react"
+import React from "react"
+import { Alert, AlertTitle } from "@/components/ui/alert"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -29,7 +29,6 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [openRow, setOpenRow] = useState<string | null>(null)
   const [rowSelection, setRowSelection] = React.useState({})
   const table = useReactTable({
     data,
@@ -96,7 +95,7 @@ export function DataTable<TData, TValue>({
                           </button>
                         </CollapsibleTrigger>
                       </TableCell> */}
-                      {row.getVisibleCells().map((cell, idx) => (
+                      {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="break-words max-w-xs">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>

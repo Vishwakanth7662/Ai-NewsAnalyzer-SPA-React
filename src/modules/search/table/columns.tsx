@@ -26,7 +26,7 @@ export const columns: ColumnDef<Article>[] = [
   {
     accessorKey: "Details",
     header: "",
-    cell: ({ row }) => (
+    cell: () => (
       <CollapsibleTrigger asChild>
         <button type="button" aria-label="Expand row">
           <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
