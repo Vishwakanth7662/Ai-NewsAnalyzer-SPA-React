@@ -43,10 +43,10 @@ export default function SubDataTable<TData>({ row }: SubDataTableProps<TData>) {
     return (
         <div className="w-full max-w-full overflow-x-auto">
             <Table className="w-full max-w-full">
-                <TableCaption>
+                <TableCaption className="border-b">
                     Articles for: {typeof row.original === "object" && row.original && "title" in row.original ? (row.original as any).title : "Untitled"}
                 </TableCaption>
-                <TableHeader>
+                <TableHeader className="border-b">
                     <TableRow>
                         <TableHead>Image</TableHead>
                         <TableHead>Source & Description</TableHead>

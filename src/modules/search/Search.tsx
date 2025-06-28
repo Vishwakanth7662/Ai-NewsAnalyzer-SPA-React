@@ -9,7 +9,6 @@ import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, Pagi
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useReactToPrint } from "react-to-print";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function renderSkeletonTable() {
     return (
@@ -46,7 +45,7 @@ export default function Search() {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
-    const [rowSelection, setRowSelection] = useState<Record<string, unknown>>({});
+    const [, setRowSelection] = useState<Record<string, unknown>>({});
 
     let componentRef = useRef(null);
 
