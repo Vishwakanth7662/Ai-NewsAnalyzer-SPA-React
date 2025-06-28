@@ -2,8 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { DataTable } from "./table/data-table";
-import { columns, type Article } from "./table/columns";
-
+import { columns, type GroupedCategory } from "./table/columns";
 import { useEffect, useRef, useState } from "react";
 import { GetArticles } from "./GetArticles";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination";
@@ -42,7 +41,7 @@ function renderSkeletonTable() {
 }
 
 export default function Search() {
-    const [data, setData] = useState<Article[]>([]);
+    const [data, setData] = useState<GroupedCategory[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -74,7 +73,7 @@ export default function Search() {
 
     return (
         <div className="p-8 max-w-full overflow-x-auto gap-8" ref={componentRef}>
-            <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4 print-hidden">
                 <Textarea className="flex-[2] min-h-[56px]" />
                 <div className="flex-1 flex justify-center">
                     <Button onClick={() => fetchData(page, pageSize)} className="w-auto px-8">Submit</Button>
@@ -89,63 +88,63 @@ export default function Search() {
             <div className="grid col-span-12">
             </div>
             <div className="">
-            <pre className="w-full">{JSON.stringify(rowSelection, null, 2)}</pre>
+                {loading ?
+                    renderSkeletonTable()
+                    :
+                    <div>
+                        <DataTable columns={columns} data={data} onRowSelectionChange={setRowSelection} />
+                        {/* You can use rowSelection here as needed, e.g., for debugging: */}
+
+                        <div className="flex items-center justify-between mt-4 print-hidden">
+                            <div>
+                                <label htmlFor="page-size" className="mr-2">Page Size:</label>
+                                <select
+                                    id="page-size"
+                                    className="border rounded px-2 py-1"
+                                    value={pageSize}
+                                    onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                                >
+                                    {[5, 10, 20, 50].map(size => (
+                                        <option key={size} value={size}>{size}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious href="#" onClick={e => { e.preventDefault(); if (page > 1) setPage(page - 1); }} />
+                                    </PaginationItem>
+                                    {[...Array(totalPages)].map((_, idx) => (
+                                        <PaginationItem key={idx}>
+                                            <PaginationLink
+                                                href="#"
+                                                isActive={page === idx + 1}
+                                                onClick={e => { e.preventDefault(); setPage(idx + 1); }}
+                                            >
+                                                {idx + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                    <PaginationItem>
+                                        <PaginationNext href="#" onClick={e => { e.preventDefault(); if (page < totalPages) setPage(page + 1); }} />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+                    </div>
+                }
+                {/* <pre className="w-full">{JSON.stringify(rowSelection, null, 2)}</pre>
                 <Tabs defaultValue="analysis" className="w-full">
                     <TabsList>
                         <TabsTrigger value="analysis">Analysis</TabsTrigger>
                         <TabsTrigger value="comparision">Comparision</TabsTrigger>
                     </TabsList>
                     <TabsContent value="analysis">
-                        {loading ?
-                            renderSkeletonTable()
-                            :
-                            <div>
-                                <DataTable columns={columns} data={data} onRowSelectionChange={setRowSelection} />
-                                {/* You can use rowSelection here as needed, e.g., for debugging: */}
-                                
-                                <div className="flex items-center justify-between mt-4">
-                                    <div>
-                                        <label htmlFor="page-size" className="mr-2">Page Size:</label>
-                                        <select
-                                            id="page-size"
-                                            className="border rounded px-2 py-1"
-                                            value={pageSize}
-                                            onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-                                        >
-                                            {[5, 10, 20, 50].map(size => (
-                                                <option key={size} value={size}>{size}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <Pagination>
-                                        <PaginationContent>
-                                            <PaginationItem>
-                                                <PaginationPrevious href="#" onClick={e => { e.preventDefault(); if (page > 1) setPage(page - 1); }} />
-                                            </PaginationItem>
-                                            {[...Array(totalPages)].map((_, idx) => (
-                                                <PaginationItem key={idx}>
-                                                    <PaginationLink
-                                                        href="#"
-                                                        isActive={page === idx + 1}
-                                                        onClick={e => { e.preventDefault(); setPage(idx + 1); }}
-                                                    >
-                                                        {idx + 1}
-                                                    </PaginationLink>
-                                                </PaginationItem>
-                                            ))}
-                                            <PaginationItem>
-                                                <PaginationNext href="#" onClick={e => { e.preventDefault(); if (page < totalPages) setPage(page + 1); }} />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
-                                </div>
-                            </div>
-                        }
                     </TabsContent>
                     <TabsContent value="comparision">
 
                     </TabsContent>
-                </Tabs>
+                </Tabs> */}
             </div>
         </div>
     )
