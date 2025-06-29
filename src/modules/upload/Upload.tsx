@@ -53,7 +53,7 @@ export function Upload() {
                 method: "POST",
                 body: formData,
             });
-            if (response.status === 200) {
+            if (response.ok) {
                 setMessage("Files uploaded successfully!");
                 setFiles([]);
             } else {
